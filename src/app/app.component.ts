@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
     })
   }
 
-  test() {
+  getData() {
     const headers1 = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ` + environment.apiKey,

@@ -1,18 +1,120 @@
+<div fxLayout="row" fxLayoutAlign="center center">
+<mat-card  fxFlex="40" style="margin-top: 30px; margin-bottom: 30px">
+  <mat-card-title>Clash of Clans Player Data</mat-card-title>
+  <mat-card-content *ngIf="formGroup">
+    <form [formGroup]="formGroup"  fxLayout="column">
+      <mat-form-field >
+        <input type="text" matInput formControlName="player_tag"
+               placeholder="Player Tag">
+      </mat-form-field>
+      <button type="button" mat-raised-button (click)="getData()">Get data</button>
+    </form>
+  </mat-card-content>
+</mat-card>
+</div>
 
+<div *ngIf="!isLoading" fxLayout="column" fxLayoutAlign="center center" >
+<mat-card *ngIf="cocPlayerModel" style="margin-left: 30px; margin-right: 30px">
+  <mat-card-title fxLayout="column" fxLayoutAlign="center center">Player Data</mat-card-title>
+  <mat-card-content fxLayout="column" fxLayoutAlign="center center">
+    <div fxLayout="row wrap" fxFill>
 
-<div *ngIf="!isLoading">
-  <form [formGroup]="formGroup" >
-    <mat-form-field>
-      <input type="text" matInput formControlName="player_tag"
-             placeholder="Player Tag">
-    </mat-form-field>
-    <button type="button" mat-raised-button (click)="test()">Adat lekérése</button>
-  </form>
+      <div class="key" fxFlex="50" fxLayoutAlign="end ">Name</div>
+      <div class="value" fxFlex="50" fxLayoutGap="10px">{{cocPlayerModel.name}}</div>
 
+      <div class="key" fxFlex="50" fxLayoutAlign="end ">Tag</div>
+      <div class="value" fxFlex="50" fxLayoutGap="10px">{{cocPlayerModel.tag}}</div>
+
+      <div class="key" fxFlex="50" fxLayoutAlign="end ">Clan</div>
+      <div class="value" fxFlex="50" fxLayoutGap="10px">
+        <div fxLayout="column" *ngIf="cocPlayerModel?.clan">
+          <div fxLayout="row" style="font-weight: bold">
+            <div fxFlex="20">Name</div>
+            <div fxFlex="10">Tag</div>
+            <div fxFlex="20">Level</div>
+          </div>
+          <div fxLayout="row">
+            <div fxFlex="20">{{cocPlayerModel.clan.name}}</div>
+            <div fxFlex="10">{{cocPlayerModel.clan.tag}}</div>
+            <div fxFlex="20">{{cocPlayerModel.clan.clanLevel}}</div>
+          </div>
+        </div>
+        <div fxLayout="column">
+          <div fxLayout="row">
+            <div>Player has not clan</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="key" fxFlex="50" fxLayoutAlign="end ">TownHall Level</div>
+      <div class="value" fxFlex="50" fxLayoutGap="10px">{{cocPlayerModel.townHallLevel}}</div>
+
+      <div class="key" fxFlex="50" fxLayoutAlign="end ">BuilderHall Level</div>
+      <div class="value" fxFlex="50" fxLayoutGap="10px">{{cocPlayerModel.builderHallLevel}}</div>
+
+      <div class="key" fxFlex="50" fxLayoutAlign="end ">Heroes</div>
+      <div class="value" fxFlex="50" fxLayoutGap="10px">
+        <div fxLayout="row" style="font-weight: bold">
+          <div fxFlex="15">Name</div>
+          <div fxFlex="20">Level/Max Level</div>
+          <div fxFlex="10">Village</div>
+        </div>
+        <div *ngFor="let hero of cocPlayerModel.heroes">
+          <div fxLayout="column">
+            <div fxLayout="row">
+              <div fxFlex="15">{{hero.name}}</div>
+              <div fxFlex="20">{{hero.level}}/{{hero.maxLevel}}</div>
+              <div fxFlex="10">{{hero.village}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="key" fxFlex="50" fxLayoutAlign="end ">Troops</div>
+      <div class="value" fxFlex="50" fxLayoutGap="10px">
+        <div fxLayout="row" style="font-weight: bold">
+          <div fxFlex="15">Name</div>
+          <div fxFlex="20">Level/Max Level</div>
+          <div fxFlex="10">Village</div>
+        </div>
+        <div *ngFor="let hero of cocPlayerModel.troops">
+          <div fxLayout="column">
+            <div fxLayout="row">
+              <div fxFlex="15">{{hero.name}}</div>
+              <div fxFlex="20">{{hero.level}}/{{hero.maxLevel}}</div>
+              <div fxFlex="10">{{hero.village}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="key" fxFlex="50" fxLayoutAlign="end ">Spells</div>
+      <div class="value" fxFlex="50" fxLayoutGap="10px">
+        <div fxLayout="row" style="font-weight: bold">
+          <div fxFlex="15">Name</div>
+          <div fxFlex="20">Level/Max Level</div>
+          <div fxFlex="10">Village</div>
+        </div>
+        <div *ngFor="let hero of cocPlayerModel.spells">
+          <div fxLayout="column">
+            <div fxLayout="row">
+              <div fxFlex="15">{{hero.name}}</div>
+              <div fxFlex="20">{{hero.level}}/{{hero.maxLevel}}</div>
+              <div fxFlex="10">{{hero.village}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </mat-card-content>
   <div>ADATOK</div>
   <div>{{cocPlayerModel | json}}</div>
+</mat-card>
+
 </div>
-<div *ngIf="isLoading">
+
+<div *ngIf="isLoading" fxLayout="column" fxLayoutAlign="center center">
   <mat-spinner
     [diameter]="100"
     mode="indeterminate">
