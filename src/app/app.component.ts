@@ -1,44 +1,52 @@
-import {Component, Injectable, OnInit} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {CocPlayerModel} from "./model/coc-player-model";
-import {environment} from "../environments/environment";
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {Component, OnInit} from '@angular/core';
+import {HttpErrorResponse} from "@angular/common/http";
+import {CocPlayerModel} from "./models/coc-player-model";
+import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {CocService} from "./services/coc-service";
+import {CocApiError} from "./models/coc-api-error";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-@Injectable()
 export class AppComponent implements OnInit {
 
   formGroup: FormGroup | undefined;
   isLoading: boolean = false;
   cocPlayerModel: CocPlayerModel | undefined;
+  backendError: boolean = false;
+  backendErrorText: String | undefined;
 
   constructor(
-    private httpClient: HttpClient,
-    private formBuilder: FormBuilder) {
+    private formBuilder: FormBuilder,
+    private cocService: CocService) {
   }
 
   ngOnInit(): void {
     this.formGroup = this.formBuilder.group({
-      player_tag: ['']
+      player_tag: ['', Validators.required]
     })
+  }
+
+  get playerTag(): AbstractControl {
+    // @ts-ignore
+    return this.formGroup.get('player_tag');
   }
 
   getData() {
-    const headers1 = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ` + environment.apiKey,
-    })
     this.isLoading = true;
-    this.httpClient.get<CocPlayerModel>("/api/players/%23" + this.formGroup?.value.player_tag, {headers: headers1}
-    ).subscribe((tes: CocPlayerModel) => {
-      console.log(tes);
-      this.cocPlayerModel = tes;
-      this.isLoading = false;
-    })
+    this.cocService.getCocPlayerInfo(this.formGroup?.value)
+      .subscribe((cocPlayerModel: CocPlayerModel) => {
+        this.isLoading = false;
+        this.backendError = false;
+        this.cocPlayerModel = cocPlayerModel;
+        console.log(cocPlayerModel);
+      }, (error: HttpErrorResponse) => {
+        this.isLoading = false;
+        this.backendError = true;
+        let cocApiError: CocApiError = error.error;
+        this.backendErrorText = cocApiError.reason;
+      })
   }
-
 }

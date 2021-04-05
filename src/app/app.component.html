@@ -6,14 +6,18 @@
         <mat-form-field>
           <input type="text" matInput formControlName="player_tag"
                  placeholder="Player Tag">
+          <mat-error *ngIf="playerTag.hasError('required')">Player Tag required</mat-error>
         </mat-form-field>
-        <button type="button" mat-raised-button (click)="getData()">Get data</button>
+        <button type="button" color="primary" mat-raised-button (click)="getData()" [disabled]="formGroup.invalid">Get
+          data
+        </button>
       </form>
     </mat-card-content>
   </mat-card>
 </div>
 
-<div *ngIf="!isLoading && cocPlayerModel" fxLayout="row wrap" fxFill fxLayoutGap="20px grid" fxLayoutAlign="center "
+<div *ngIf="!isLoading && cocPlayerModel && !backendError" fxLayout="row wrap" fxFill fxLayoutGap="20px grid"
+     fxLayoutAlign="center "
      style="padding-left: 10px; padding-right: 10px">
 
   <div fxFlex="20">
@@ -21,11 +25,53 @@
       <mat-card-title fxLayoutAlign="center center">Player Data</mat-card-title>
       <mat-card-content>
         <div fxLayout="row wrap" fxFill>
-          <div class="key" fxFlex="50" fxLayoutAlign="end ">Name</div>
-          <div class="value" fxFlex="50" fxLayoutGap="10px">{{cocPlayerModel.name}}</div>
 
-          <div class="key" fxFlex="50" fxLayoutAlign="end ">Tag</div>
-          <div class="value" fxFlex="50" fxLayoutGap="10px">{{cocPlayerModel.tag}}</div>
+          <app-row-data [key]="'Name'" [value]="cocPlayerModel.name"></app-row-data>
+          <app-row-data [key]="'Tag'" [value]="cocPlayerModel.tag"></app-row-data>
+          <app-row-data [key]="'Role'" [value]="cocPlayerModel.role"></app-row-data>
+          <app-row-data [key]="'Attack Wins'" [value]="cocPlayerModel.attackWins"></app-row-data>
+          <app-row-data [key]="'Defense Wins'" [value]="cocPlayerModel.defenseWins"></app-row-data>
+          <app-row-data [key]="'TownHall Level'" [value]="cocPlayerModel.townHallLevel"></app-row-data>
+          <app-row-data [key]="'TownHall Weapon Level'" [value]="cocPlayerModel.townHallWeaponLevel"></app-row-data>
+          <app-row-data [key]="'Versus Battle Wins'" [value]="cocPlayerModel.versusBattleWinCount"></app-row-data>
+          <app-row-data [key]="'EXP Level'" [value]="cocPlayerModel.expLevel"></app-row-data>
+          <app-row-data [key]="'Trophies'" [value]="cocPlayerModel.trophies"></app-row-data>
+          <app-row-data [key]="'Best Trophies'" [value]="cocPlayerModel.bestTrophies"></app-row-data>
+          <app-row-data [key]="'Donations'" [value]="cocPlayerModel.donations"></app-row-data>
+          <app-row-data [key]="'Donation Received'" [value]="cocPlayerModel.donationsReceived"></app-row-data>
+          <app-row-data [key]="'BuildHall Level'" [value]="cocPlayerModel.builderHallLevel"></app-row-data>
+          <app-row-data [key]="'Versus Trophies'" [value]="cocPlayerModel.versusTrophies"></app-row-data>
+          <app-row-data [key]="'Best Versus Trophies'" [value]="cocPlayerModel.bestVersusTrophies"></app-row-data>
+          <app-row-data [key]="'War Stars'" [value]="cocPlayerModel.warStars"></app-row-data>
+          <app-row-data [key]="'Versus Battle Win Count'" [value]="cocPlayerModel.versusBattleWinCount"></app-row-data>
+
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+
+    <mat-card style="margin-top: 10px">
+      <mat-card-title fxLayoutAlign="center center">Player Clan</mat-card-title>
+      <mat-card-content>
+        <div class="value" fxLayout="column" fxLayoutAlign="center center">
+          <div *ngIf="cocPlayerModel.clan">
+            <div fxLayoutAlign="center center">
+              <img alt="Clan Logo" src="{{cocPlayerModel.clan.badgeUrls.medium}}"/>
+            </div>
+            <div fxLayout="row wrap" fxFill>
+              <div class="key" fxFlex="50" fxLayoutAlign="end ">Name</div>
+              <div class="value" fxFlex="50" fxLayoutGap="10px"> {{cocPlayerModel.clan.name}}</div>
+
+              <div class="key" fxFlex="50" fxLayoutAlign="end ">Tag</div>
+              <div class="value" fxFlex="50" fxLayoutGap="10px"> {{cocPlayerModel.clan.tag}}</div>
+
+              <div class="key" fxFlex="50" fxLayoutAlign="end ">Level</div>
+              <div class="value" fxFlex="50" fxLayoutGap="10px"> {{cocPlayerModel.clan.clanLevel}}</div>
+            </div>
+          </div>
+          <div *ngIf="!cocPlayerModel.clan">
+            User has no Clan
+          </div>
         </div>
       </mat-card-content>
     </mat-card>
@@ -90,7 +136,7 @@
             <div fxFlex="100/3" fxLayoutAlign="center center">Level/Max Level</div>
             <div fxFlex="100/3" fxLayoutAlign="center center">Village</div>
           </div>
-          <div *ngFor="let spell of cocPlayerModel.heroes">
+          <div *ngFor="let spell of cocPlayerModel.spells">
             <div fxLayout="column">
               <div fxLayout="row">
                 <div fxFlex="100/3" fxLayoutAlign="center center">{{spell.name}}</div>
@@ -141,4 +187,9 @@
     [diameter]="100"
     mode="indeterminate">
   </mat-spinner>
+</div>
+
+<div *ngIf="!isLoading && backendError" fxLayoutAlign="center center">
+  <mat-error>Clash of Clans Api Response:</mat-error>
+  <mat-error>{{backendErrorText}}</mat-error>
 </div>
